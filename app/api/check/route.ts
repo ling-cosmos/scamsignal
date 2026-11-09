@@ -1,6 +1,7 @@
 import { analyzeMessage, extractUrls } from '../../../features/scam-check/domain/analyze-message'
 import { assessWithClaude } from '../../../features/scam-check/infrastructure/claude'
 import { isLanguage } from '../../../features/scam-check/domain/result-schema'
+import { demoAssessment } from '../../../features/scam-check/domain/demo-assessment'
 
 export const runtime = 'nodejs'
 
@@ -36,6 +37,10 @@ export async function POST(request: Request) {
   const message = body.message.trim()
   if (!message) return jsonError(400, 'empty_message', 'Paste a message to check.')
   if (message.length > MAX_MESSAGE_LENGTH) return jsonError(413, 'message_too_long', 'Keep the message under 5,000 characters.')
+
+  if (process.env.PORTFOLIO_DEMO === 'true') {
+    return Response.json(demoAssessment(message, body.language))
+  }
 
   if (!process.env.ANTHROPIC_API_KEY) {
     return jsonError(503, 'missing_api_key', 'The checker is not configured yet. Add ANTHROPIC_API_KEY and try again.')

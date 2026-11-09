@@ -28,7 +28,7 @@ function AlertIcon() {
   return <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 16 16" fill="none"><path d="M8 2.2 14 13H2L8 2.2Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" /><path d="M8 5.5v3.2M8 11.2v.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
 }
 
-export default function ScamSignalPage() {
+export default function ScamSignalPage({ demoMode = false }: { demoMode?: boolean }) {
   const [language, setLanguage] = useState<Language>('en')
   const [message, setMessage] = useState('')
   const [assessment, setAssessment] = useState<RiskAssessment | null>(null)
@@ -64,6 +64,7 @@ export default function ScamSignalPage() {
       <div className="scan-line" aria-hidden="true" />
       <header className="site-header page-wrap"><a className="brand" href="#top" aria-label="ScamSignal home"><SignalMark /><span>ScamSignal</span></a><div className="header-meta"><span className="status-dot" aria-hidden="true" /><span>Built for safer decisions</span></div></header>
 
+      {demoMode && <aside className="page-wrap" style={{ paddingTop: 20, color: 'var(--warning)', lineHeight: 1.6 }}>Portfolio demo · Original ScamSignal app with its built-in rule checks. AI analysis is disabled. Results are indicators, never proof that a message is safe. <a href="https://ling-cosmos.github.io/Portfolio/#projects">Back to portfolio ↗</a></aside>}
       <section id="top" className="hero page-wrap">
         <div className="hero-copy"><p className="hero-label"><span>01</span> Message intelligence</p><h1>{copy.title}</h1><p className="hero-description">{copy.description}</p><div className="trust-note"><ShieldIcon /><span>{copy.privacyNote}</span></div></div>
         <div className="checker-column">

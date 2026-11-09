@@ -1,5 +1,9 @@
 # ScamSignal
 
+## Portfolio deployment
+
+The original Next.js app is hosted at https://scamsignal-portfolio.vercel.app/ with `PORTFOLIO_DEMO=true`. This explicit mode uses the original deterministic message rules with English, Filipino and Bisaya explanations. Its visible banner identifies that AI analysis is disabled. It makes no paid model calls. Removing the flag restores the original Claude API configuration requirements; the missing-key error is preserved outside demo mode.
+
 ScamSignal is a standalone scam checker for suspicious SMS, links, and GCash-style payment messages. It combines deterministic checks with a Claude assessment and returns a low, medium, or high risk signal with reasons and next steps.
 
 ## File structure

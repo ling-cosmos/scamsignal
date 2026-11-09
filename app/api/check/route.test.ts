@@ -17,6 +17,7 @@ function request(body: unknown) {
 
 describe('POST /api/check', () => {
   beforeEach(() => {
+    vi.stubEnv('PORTFOLIO_DEMO', '')
     vi.stubEnv('ANTHROPIC_API_KEY', 'test-key')
     vi.mocked(assessWithClaude).mockReset()
   })
@@ -50,5 +51,26 @@ describe('POST /api/check', () => {
     const response = await POST(request({ message: 'hello', language: 'en' }))
     expect(response.status).toBe(503)
     expect(assessWithClaude).not.toHaveBeenCalled()
+  })
+
+  it('uses original rules in explicit demo mode without calling the paid provider', async () => {
+    vi.stubEnv('PORTFOLIO_DEMO', 'true')
+    vi.stubEnv('ANTHROPIC_API_KEY', '')
+    for (const language of ['en', 'fil', 'ceb']) {
+      const response = await POST(request({ message: 'Urgent! Send your OTP at https://bit.ly/example', language }))
+      expect(response.status).toBe(200)
+      const result = await response.json()
+      expect(result.risk).toBe('high')
+      expect(result.reasons.length).toBeGreaterThan(1)
+      expect(result.what_to_do.length).toBeGreaterThan(0)
+    }
+    expect(assessWithClaude).not.toHaveBeenCalled()
+  })
+
+  it('retains validation in demo mode and does not call an unmatched message safe', async () => {
+    vi.stubEnv('PORTFOLIO_DEMO', 'true')
+    expect((await POST(request({ message: '', language: 'en' }))).status).toBe(400)
+    const result = await (await POST(request({ message: 'Hello friend', language: 'en' }))).json()
+    expect(result.reasons[0]).toContain('does not establish')
   })
 })
